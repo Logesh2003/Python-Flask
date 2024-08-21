@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Table, Button, Dropdown, DropdownButton } from 'react-bootstrap';
+import { Table, Dropdown, DropdownButton } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 const EmployeeList = () => {
@@ -33,14 +33,13 @@ const EmployeeList = () => {
         }
     };
 
-    // const handleDelete = async (id) => {
-    //     try {
-    //         await axios.delete(`http://localhost:5000/employees/${id}`, { withCredentials: true });
-    //         setEmployees(employees.filter(emp => emp.id !== id));
-    //     } catch (err) {
-    //         console.error('Error deleting employee', err);
-    //     }
-    // };
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    };
 
     return (
         <div className="container mt-5">
@@ -51,13 +50,13 @@ const EmployeeList = () => {
             <div className="d-flex justify-content-end mb-3">
                 <DropdownButton
                     id="dropdown-sort-button"
-                    title={ `Sort by ${sortBy.charAt(0).toUpperCase() + sortBy.slice(1)} (${sortDirection === 'asc' ? '▲' : '▼'})` }
+                    title={`Sort by ${sortBy.charAt(0).toUpperCase() + sortBy.slice(1)} (${sortDirection === 'asc' ? '▲' : '▼'})`}
                     variant="outline-secondary"
                 >
-                    <Dropdown.Item onClick={ () => handleSort('first_name') }>First Name</Dropdown.Item>
-                    <Dropdown.Item onClick={ () => handleSort('dob') }>Date of Birth</Dropdown.Item>
-                    <Dropdown.Item onClick={ () => handleSort('emp_id') }>Employee ID</Dropdown.Item>
-                    <Dropdown.Item onClick={ () => handleSort('joining_date') }>Joining Date</Dropdown.Item>
+                    <Dropdown.Item onClick={() => handleSort('first_name')}>First Name</Dropdown.Item>
+                    <Dropdown.Item onClick={() => handleSort('dob')}>Date of Birth</Dropdown.Item>
+                    <Dropdown.Item onClick={() => handleSort('emp_id')}>Employee ID</Dropdown.Item>
+                    <Dropdown.Item onClick={() => handleSort('joining_date')}>Joining Date</Dropdown.Item>
                 </DropdownButton>
             </div>
             <Table striped bordered hover className="shadow-sm">
@@ -71,15 +70,15 @@ const EmployeeList = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    { employees.map(emp => (
-                        <tr key={ emp.id }>
-                            <td className="text-center">{ emp.first_name }</td>
-                            <td className="text-center">{ emp.last_name }</td>
-                            <td className="text-center">{ emp.dob }</td>
-                            <td className="text-center">{ emp.emp_id }</td>
-                            <td className="text-center">{ emp.joining_date }</td>
+                    {employees.map(emp => (
+                        <tr key={emp.id}>
+                            <td className="text-center">{emp.first_name}</td>
+                            <td className="text-center">{emp.last_name}</td>
+                            <td className="text-center">{formatDate(emp.dob)}</td>
+                            <td className="text-center">{emp.emp_id}</td>
+                            <td className="text-center">{formatDate(emp.joining_date)}</td>
                         </tr>
-                    )) }
+                    ))}
                 </tbody>
             </Table>
         </div>

@@ -8,7 +8,6 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 CORS(app, supports_credentials=True)
 
-
 @app.route('/login', methods=['POST'])
 def login():
     userName = request.form.get('userName')
@@ -30,11 +29,9 @@ def login_required(f):
     @wraps(f)
     def wrap(*args, **kwargs):
         if 'user' not in session:
-            return "Unauthorized", 401
+            return jsonify({"error": "Unauthorized"}), 401
         return f(*args, **kwargs)
     return wrap
-
-
 
 @app.route('/addEmp', methods=['POST'])
 def add_employee():
@@ -49,13 +46,11 @@ def add_employee():
             "INSERT INTO employees (first_name, last_name, dob, emp_id, joining_date) VALUES (%s, %s, %s, %s, %s)",
             (data['first_name'], data['last_name'], dob, data['emp_id'], joining_date)
         )
-        connection.commit()
+        connection.commit() 
         close_connection(connection)
         return jsonify({"message": "Employee added successfully"}), 201
     except Exception as e:
         return jsonify({"message": str(e)}), 400
-    
-    
     
 @app.route('/employees', methods=['GET'])
 def get_employees():
@@ -88,36 +83,8 @@ def get_employees():
     finally:
         cursor.close()
         close_connection(connection)
-
-
-# @app.route('/employees/<int:id>', methods=['PUT'], endpoint='update_employee')
-# @login_required
-# def update_employee(id):
-#     data = request.json
-#     connection = create_connection()
-#     cursor = connection.cursor()
-
-#     cursor.execute(
-#         "UPDATE employees SET first_name = %s, last_name = %s, dob = %s, emp_id = %s, joining_date = %s WHERE id = %s",
-#         (data['first_name'], data['last_name'], data['dob'], data['emp_id'], data['joining_date'], id)
-#     )
-#     connection.commit()
-#     close_connection(connection)
-#     return jsonify({"message": "Employee updated successfully"}), 200
-
-
-# @app.route('/employees/<int:id>', methods=['DELETE'], endpoint='delete_employee')
-# @login_required
-# def delete_employee(id):
-#     connection = create_connection()
-#     cursor = connection.cursor()
-
-#     cursor.execute("DELETE FROM employees WHERE id = %s", (id,))
-#     connection.commit()
-#     close_connection(connection)
-#     return jsonify({"message": "Employee deleted successfully"}), 200
-
-
+        
+        
 
 if __name__ == '__main__':
     app.run(debug=True)
