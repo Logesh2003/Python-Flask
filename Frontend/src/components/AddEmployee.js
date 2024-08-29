@@ -3,38 +3,45 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const AddEmployee = () => {
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [dob, setDob] = useState('');
-    const [empId, setEmpId] = useState('');
-    const [joiningDate, setJoiningDate] = useState('');
+    const [employeeData, setEmployeeData] = useState({
+        firstName: '',
+        lastName: '',
+        dob: '',
+        empId: '',
+        joiningDate: ''
+    });
     const [message, setMessage] = useState('');
     const navigate = useNavigate();
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setEmployeeData({
+            ...employeeData,
+            [name]: value
+        });
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:5000/addEmp', {
-                first_name: firstName,
-                last_name: lastName,
-                dob,
-                emp_id: empId,
-                joining_date: joiningDate
-            }, { withCredentials: true });
+            const response = await axios.post('http://localhost:5000/addEmp', employeeData, { withCredentials: true });
 
-            setMessage(response.data.message); 
+            setMessage(response.data.message);
 
-            setFirstName('');
-            setLastName('');
-            setDob('');
-            setEmpId('');
-            setJoiningDate('');
-
+            // Reset form fields
+            setEmployeeData({
+                firstName: '',
+                lastName: '',
+                dob: '',
+                empId: '',
+                joiningDate: ''
+            });
 
             navigate('/employees');
         } catch (err) {
             console.error("Error adding employee:", err.response ? err.response.data : err.message);
             setMessage('Error adding employee');
+            
         }
     };
 
@@ -46,20 +53,22 @@ const AddEmployee = () => {
                     <div className="col-md-6">
                         <input
                             type="text"
-                            placeholder='First Name'
+                            name="firstName"
+                            placeholder="First Name"
                             className="form-control"
-                            value={firstName}
-                            onChange={(e) => setFirstName(e.target.value)}
+                            value={employeeData.firstName}
+                            onChange={handleChange}
                             required
                         />
                     </div>
                     <div className="col-md-6">
                         <input
                             type="text"
-                            placeholder='Last Name'
+                            name="lastName"
+                            placeholder="Last Name"
                             className="form-control"
-                            value={lastName}
-                            onChange={(e) => setLastName(e.target.value)}
+                            value={employeeData.lastName}
+                            onChange={handleChange}
                             required
                         />
                     </div>
@@ -68,19 +77,21 @@ const AddEmployee = () => {
                     <div className="col-md-6">
                         <input
                             type="date"
+                            name="dob"
                             className="form-control"
-                            value={dob}
-                            onChange={(e) => setDob(e.target.value)}
+                            value={employeeData.dob}
+                            onChange={handleChange}
                             required
                         />
                     </div>
                     <div className="col-md-6">
                         <input
                             type="text"
-                            placeholder='Employee ID'
+                            name="empId"
+                            placeholder="Employee ID"
                             className="form-control"
-                            value={empId}
-                            onChange={(e) => setEmpId(e.target.value)}
+                            value={employeeData.empId}
+                            onChange={handleChange}
                             required
                         />
                     </div>
@@ -89,9 +100,10 @@ const AddEmployee = () => {
                     <div className="col-md-6">
                         <input
                             type="date"
+                            name="joiningDate"
                             className="form-control"
-                            value={joiningDate}
-                            onChange={(e) => setJoiningDate(e.target.value)}
+                            value={employeeData.joiningDate}
+                            onChange={handleChange}
                             required
                         />
                     </div>

@@ -1,48 +1,30 @@
 import React, { useState } from 'react';
 import { Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import img1 from '../images/logo.png';
 import '../components/Login.css';
 
 function LoginForm() {
     const [validated, setValidated] = useState(false);
-    const [userName, setUserName] = useState(''); 
+    const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = (event) => {
         event.preventDefault();
         const form = event.currentTarget;
         if (form.checkValidity() === false) {
             event.stopPropagation();
         } else {
-            try {
-                const response = await fetch('http://localhost:5000/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: new URLSearchParams({
-                        userName: userName,
-                        password: password,
-                    }),
-                });
-
-                if (response.ok) {
-                    const result = await response.text();
-                    if (result === 'Login successful') {
-                        navigate('/employees'); 
-                    } else {
-                        alert('Invalid username or password.');
-                    }
-                } else {
-                    alert('Login failed. Please check your credentials.');
-                }
-            } catch (error) {
-                console.error('Error during login:', error);
-                alert('An error occurred. Please try again later.');
-            }
+            dispatch({
+                type: 'LOGIN_REQUEST',
+                payload: { userName, password }
+            });
+            navigate('/employees'); 
         }
+
         setValidated(true);
     };
 
